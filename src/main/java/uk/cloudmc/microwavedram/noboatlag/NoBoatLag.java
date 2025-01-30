@@ -2,15 +2,22 @@ package uk.cloudmc.microwavedram.noboatlag;
 
 import net.minecraft.server.level.ServerLevel;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_21_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftBoat;
 import org.bukkit.entity.Boat;
+import org.bukkit.entity.ChestBoat;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.EntityPlaceEvent;
+import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class NoBoatLag extends JavaPlugin implements Listener {
@@ -18,11 +25,23 @@ public final class NoBoatLag extends JavaPlugin implements Listener {
     // Cancel the placement of boats, and instead spawn one of our Collisionless ones.
     @EventHandler
     public void onEntityPlace(EntityPlaceEvent entityPlaceEvent) {
-        if (entityPlaceEvent.getEntity() instanceof Boat) {
+        if (entityPlaceEvent.getEntity() instanceof Boat && !(entityPlaceEvent.getEntity() instanceof ChestBoat)) {
             Boat boat = (Boat) entityPlaceEvent.getEntity();
 
             // Passing Enum ordinal as java refuses to cast the type to the NMS one.
             spawnBoat(boat.getLocation(), boat.getBoatType().ordinal());
+
+            Player player = entityPlaceEvent.getPlayer();
+            PlayerInventory inventory = player.getInventory();
+
+            if (player.getGameMode() != GameMode.CREATIVE) {
+                if (entityPlaceEvent.getHand() == EquipmentSlot.HAND) {
+                    inventory.setItemInMainHand(null);
+                } else if (entityPlaceEvent.getHand() == EquipmentSlot.OFF_HAND) {
+                    inventory.setItemInOffHand(null);
+                }
+            }
+
 
             // Prevent the real boat from spawning
             entityPlaceEvent.setCancelled(true);
