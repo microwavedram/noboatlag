@@ -1,0 +1,6 @@
+name: noboatlag
+description: Fix "BoatLag", sometimes known as quantum entanglement
+author: microwavedram
+version: '1.0-SNAPSHOT'
+main: uk.cloudmc.microwavedram.noboatlag.NoBoatLag
+api-version: '1.21'
