@@ -1,0 +1,5 @@
+# If a player has OpenBoatUtils (o7Moon) installed, their client mod will
+# be configured to revert interpolation back to pre 1.21.1
+# https://github.com/o7Moon/OpenBoatUtils
+# https://github.com/o7Moon/OpenBoatUtils/wiki/Packets#set-ten-step-interpolation
+open_boat_utils_interpolation_fix: true
