@@ -1,8 +1,14 @@
 package uk.cloudmc.microwavedram.noboatlag;
 
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.vehicle.AbstractBoat;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
+
+import java.util.function.Supplier;
 
 // https://github.com/FrostHexABG/TimingSystemNoBoatCollisions/blob/master/spigot-1.21.1/src/main/java/com/frosthex/timingsystem/noboatcollisions/nms_1_21_1/CollisionlessBoat.java
 // BoatLag fix from TimingSystem (Primary plugin on main boatracing servers)
@@ -19,8 +25,8 @@ import net.minecraft.world.level.Level;
 // Boats just sitting around use a different collision method, which still works vannila.
 
 public class CollisionlessBoat extends Boat {
-    public CollisionlessBoat(Level world, double d0, double d1, double d2) {
-        super(world, d0, d1, d2);
+    public CollisionlessBoat(EntityType<? extends Boat> var0, Level var1, Supplier<Item> var2) {
+        super(var0, var1, var2);
     }
 
     // Force all collision checks to fail
