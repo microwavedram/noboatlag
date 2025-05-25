@@ -8,6 +8,9 @@ import net.minecraft.world.item.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftBoat;
 import org.bukkit.entity.Boat;
@@ -27,7 +30,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Objects;
 
-public final class NoBoatLag extends JavaPlugin implements Listener {
+public final class NoBoatLag extends JavaPlugin implements Listener, CommandExecutor {
 
     // Cancel the placement of boats, and instead spawn one of our Collisionless ones.
     @EventHandler
@@ -114,6 +117,22 @@ public final class NoBoatLag extends JavaPlugin implements Listener {
         boat.teleportTo(location.getX(), location.getY(), location.getZ());
 
         level.addFreshEntity(boat, CreatureSpawnEvent.SpawnReason.COMMAND);
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (command.getName().equalsIgnoreCase("noboatlag")) {
+            if (args.length > 0 && args[0].equalsIgnoreCase("reload")) {
+                reloadConfig();
+                sender.sendMessage("noboatlag: Configuration reloaded.");
+                return true;
+            } else {
+                sender.sendMessage("Usage: /noboatlag reload");
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

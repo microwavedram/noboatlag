@@ -4,3 +4,7 @@ author: microwavedram
 version: '1.0-SNAPSHOT'
 main: uk.cloudmc.microwavedram.noboatlag.NoBoatLag
 api-version: '1.21'
+
+commands:
+  noboatlag:
+    description: "Reload Configuration"
