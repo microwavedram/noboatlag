@@ -1,15 +1,13 @@
 package uk.cloudmc.microwavedram.noboatlag;
 
+import net.minecraft.world.item.Items;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.entity.vehicle.AbstractBoat;
+import net.minecraft.world.item.Item;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.TreeSpecies;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.craftbukkit.v1_21_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftBoat;
 import org.bukkit.entity.Boat;
@@ -34,13 +32,16 @@ public final class NoBoatLag extends JavaPlugin implements Listener {
     // Cancel the placement of boats, and instead spawn one of our Collisionless ones.
     @EventHandler
     public void onEntityPlace(EntityPlaceEvent entityPlaceEvent) {
-        if (entityPlaceEvent.getEntity() instanceof Boat && !(entityPlaceEvent.getEntity() instanceof ChestBoat)) {
+        if (entityPlaceEvent.getEntity() instanceof AbstractBoat && !(entityPlaceEvent.getEntity() instanceof ChestBoat)) {
             Boat boat = (Boat) entityPlaceEvent.getEntity();
 
-            EntityType type = ((CraftBoat) boat).getHandle().getType();
+            AbstractBoat abstractBoat = ((CraftBoat) boat).getHandle();
+
+            EntityType<?> type = abstractBoat.getType();
 
             spawnBoat(boat.getLocation(), type);
             Player player = entityPlaceEvent.getPlayer();
+            assert player != null;
             PlayerInventory inventory = player.getInventory();
 
             if (player.getGameMode() != GameMode.CREATIVE) {
@@ -77,10 +78,34 @@ public final class NoBoatLag extends JavaPlugin implements Listener {
     }
 
     // Spawn one of our collisionless boats at a location.
-    public void spawnBoat(Location location, net.minecraft.world.entity.EntityType<? extends net.minecraft.world.entity.vehicle.Boat> entityType) {
+    public void spawnBoat(Location location, net.minecraft.world.entity.EntityType<?> entityType) {
         ServerLevel level = ((CraftWorld) Objects.requireNonNull(location.getWorld())).getHandle();
 
-        CollisionlessBoat boat = new CollisionlessBoat(entityType, level, () -> Items.DIRT);
+        Item dropItem;
+
+        if (entityType == EntityType.OAK_BOAT) {
+            dropItem = Items.OAK_BOAT;
+        } else if (entityType == EntityType.BIRCH_BOAT) {
+            dropItem = Items.BIRCH_BOAT;
+        } else if (entityType == EntityType.SPRUCE_BOAT) {
+            dropItem = Items.SPRUCE_BOAT;
+        } else if (entityType == EntityType.JUNGLE_BOAT) {
+            dropItem = Items.JUNGLE_BOAT;
+        } else if (entityType == EntityType.ACACIA_BOAT) {
+            dropItem = Items.ACACIA_BOAT;
+        } else if (entityType == EntityType.DARK_OAK_BOAT) {
+            dropItem = Items.DARK_OAK_BOAT;
+        } else if (entityType == EntityType.MANGROVE_BOAT) {
+            dropItem = Items.MANGROVE_BOAT;
+        } else if (entityType == EntityType.BAMBOO_RAFT) {
+            dropItem = Items.BAMBOO_RAFT;
+        } else if (entityType == EntityType.PALE_OAK_BOAT) {
+            dropItem = Items.PALE_OAK_BOAT;
+        } else {
+            dropItem = Items.DIRT;
+        }
+
+        CollisionlessBoat boat = new CollisionlessBoat((EntityType<? extends net.minecraft.world.entity.vehicle.Boat>) entityType, level, () -> dropItem);
         float yaw = Location.normalizeYaw(location.getYaw());
         boat.setYRot(yaw);
         boat.yRotO = yaw;
