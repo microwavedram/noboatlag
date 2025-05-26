@@ -13,6 +13,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_21_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_21_R3.entity.CraftBoat;
+import org.bukkit.craftbukkit.v1_21_R3.entity.CraftChestBoat;
+import org.bukkit.craftbukkit.v1_21_R3.entity.boat.CraftBambooRaft;
+import org.bukkit.craftbukkit.v1_21_R3.entity.boat.CraftCherryBoat;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.ChestBoat;
 import org.bukkit.entity.Player;
@@ -35,7 +38,7 @@ public final class NoBoatLag extends JavaPlugin implements Listener, CommandExec
     // Cancel the placement of boats, and instead spawn one of our Collisionless ones.
     @EventHandler
     public void onEntityPlace(EntityPlaceEvent entityPlaceEvent) {
-        if (entityPlaceEvent.getEntity() instanceof AbstractBoat && !(entityPlaceEvent.getEntity() instanceof ChestBoat)) {
+        if (entityPlaceEvent.getEntity() instanceof CraftBoat && !(entityPlaceEvent.getEntity() instanceof CraftChestBoat)) {
             Boat boat = (Boat) entityPlaceEvent.getEntity();
 
             AbstractBoat abstractBoat = ((CraftBoat) boat).getHandle();
@@ -100,6 +103,8 @@ public final class NoBoatLag extends JavaPlugin implements Listener, CommandExec
             dropItem = Items.DARK_OAK_BOAT;
         } else if (entityType == EntityType.MANGROVE_BOAT) {
             dropItem = Items.MANGROVE_BOAT;
+        } else if (entityType == EntityType.CHERRY_BOAT) {
+            dropItem = Items.CHERRY_BOAT;
         } else if (entityType == EntityType.BAMBOO_RAFT) {
             dropItem = Items.BAMBOO_RAFT;
         } else if (entityType == EntityType.PALE_OAK_BOAT) {
@@ -108,15 +113,28 @@ public final class NoBoatLag extends JavaPlugin implements Listener, CommandExec
             dropItem = Items.DIRT;
         }
 
-        CollisionlessBoat boat = new CollisionlessBoat((EntityType<? extends net.minecraft.world.entity.vehicle.Boat>) entityType, level, () -> dropItem);
-        float yaw = Location.normalizeYaw(location.getYaw());
-        boat.setYRot(yaw);
-        boat.yRotO = yaw;
-        boat.setYHeadRot(yaw);
+        if (entityType == EntityType.BAMBOO_RAFT) {
+            CollisionlessRaft raft = new CollisionlessRaft((EntityType<? extends net.minecraft.world.entity.vehicle.Raft>) entityType, level, () -> dropItem);
 
-        boat.teleportTo(location.getX(), location.getY(), location.getZ());
+            float yaw = Location.normalizeYaw(location.getYaw());
+            raft.setYRot(yaw);
+            raft.yRotO = yaw;
+            raft.setYHeadRot(yaw);
 
-        level.addFreshEntity(boat, CreatureSpawnEvent.SpawnReason.COMMAND);
+            raft.teleportTo(location.getX(), location.getY(), location.getZ());
+
+            level.addFreshEntity(raft, CreatureSpawnEvent.SpawnReason.COMMAND);
+        } else {
+            CollisionlessBoat boat = new CollisionlessBoat((EntityType<? extends net.minecraft.world.entity.vehicle.Boat>) entityType, level, () -> dropItem);
+            float yaw = Location.normalizeYaw(location.getYaw());
+            boat.setYRot(yaw);
+            boat.yRotO = yaw;
+            boat.setYHeadRot(yaw);
+
+            boat.teleportTo(location.getX(), location.getY(), location.getZ());
+
+            level.addFreshEntity(boat, CreatureSpawnEvent.SpawnReason.COMMAND);
+        }
     }
 
     @Override
