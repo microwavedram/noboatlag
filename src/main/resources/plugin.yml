@@ -1,9 +1,22 @@
-name: noboatlag
-description: Fix "BoatLag", sometimes known as quantum entanglement
-author: microwavedram
-version: '1.0-SNAPSHOT'
+name: NoBoatLag
+version: '${version}'
 main: uk.cloudmc.microwavedram.noboatlag.NoBoatLag
 api-version: '1.21'
+prefix: NoBoatLag
+load: STARTUP
+authors: [ localhackerman / microwavedram ]
+description: Fix annoying behaviour with moving boats
+website: https://github.com/microwavedram/noboatlag
+softdepend:
+  - ProtocolLib
+  - ProtocolSupport
+  - ViaVersion
+  - ViaBackwards
+  - ViaRewind
+  - Geyser-Spigot
+
+permissions:
+  noboatlag.reload: {}
 
 commands:
   noboatlag:
